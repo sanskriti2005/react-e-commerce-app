@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "../redux/action";
+import { addToCart, fetchProducts } from "../redux/action";
 import React, { useEffect } from "react";
 import { Grid, GridItem, Text, Image, HStack, Button } from "@chakra-ui/react";
 
@@ -11,16 +11,7 @@ const ProductList = () => {
   }, []);
 
   const handleAddToCart = (productObj) => {
-    console.log(productObj)
-    const cart = JSON.parse(localStorage.getItem('cart'));
-    let localStorageCart;
-    if (cart == null){
-      localStorageCart = [{...productObj}]
-      localStorage.setItem('cart',JSON.stringify(localStorageCart))
-    } else {
-      localStorageCart = [...cart, {...productObj}]
-      localStorage.setItem('cart', JSON.stringify(localStorageCart))
-    }
+    dispatch(addToCart(productObj))
   }
   return (
     <div>
