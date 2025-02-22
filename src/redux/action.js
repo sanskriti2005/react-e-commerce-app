@@ -3,6 +3,7 @@ import axios from "axios";
 export const FETCH_PRODUCTS = "FETCH_PRODUCTS";
 export const ADD_TO_CART = "ADD_TO_CART";
 export const REMOVE_FROM_CART = "REMOVE_FROM_CART";
+export const UPDATE_QUANTITY = "UPDATE_QUANTITY";
 
 export const fetchProducts = () => async (dispatch) => {
   try {
@@ -16,20 +17,18 @@ export const addToCart = (productObj) => (dispatch) => {
   const cart = JSON.parse(localStorage.getItem("cart"));
   let localStorageCart;
   if (cart == null) {
-    localStorageCart = [{ ...productObj, quanitity: 1 }];
+    localStorageCart = [{ ...productObj, quantity: 1 }];
     localStorage.setItem("cart", JSON.stringify(localStorageCart));
   } else {
-    let quanitity;
+    let quantity;
     const objFind = cart.find((cartItem) => cartItem.id === productObj.id);
-    console.log(objFind)
-    console.log(quanitity)
-    if(objFind){
-      quanitity = objFind.quanitity + 1
+    if (objFind) {
+      quantity = objFind.quantity + 1;
     }
-    console.log(quanitity)
-    console.log(objFind)
-    const objForLocalStorage = {...objFind, quanitity: quanitity}
-    const updatedCart = cart.filter((cartItem) => cartItem.id !== objFind.id && cartItem);
+    const objForLocalStorage = { ...objFind, quantity: quantity };
+    const updatedCart = cart.filter(
+      (cartItem) => cartItem.id !== objFind.id && cartItem
+    );
     localStorageCart = [...updatedCart, objForLocalStorage];
     localStorage.setItem("cart", JSON.stringify(localStorageCart));
   }
@@ -41,4 +40,18 @@ export const removeFromCart = (id) => (dispatch) => {
   const updatedCart = cart.filter((cartItem) => cartItem.id !== id && cartItem);
   localStorage.setItem("cart", JSON.stringify(updatedCart));
   dispatch({ type: REMOVE_FROM_CART, payload: updatedCart });
+};
+
+export const updateQuantity = (productObj, quantityFromCart) => (dispatch) => {
+  const cart = JSON.parse(localStorage.getItem("cart"));
+  let localStorageCart;
+  const objFind = cart.find((cartItem) => cartItem.id === productObj.id);
+  let quantity = Number(quantityFromCart);
+  const objForLocalStorage = { ...objFind, quantity: quantity };
+  const updatedCart = cart.filter(
+    (cartItem) => cartItem.id !== objFind.id && cartItem
+  );
+  localStorageCart = [...updatedCart, objForLocalStorage];
+  localStorage.setItem("cart", JSON.stringify(localStorageCart));
+  dispatch({ type: UPDATE_QUANTITY, payload: localStorageCart })
 };
